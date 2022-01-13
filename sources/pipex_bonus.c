@@ -5,86 +5,99 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: lemarque <lemarque@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2022/01/12 09:26:09 by lemarque          #+#    #+#             */
-/*   Updated: 2022/01/12 10:53:59 by lemarque         ###   ########.fr       */
+/*   Created: 2022/01/12 09:26:21 by lemarque          #+#    #+#             */
+/*   Updated: 2022/01/12 22:43:16 by lemarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include"pipex_bonus.h"
 
-static void	open_files(t_args *args, int type, int *outfile, int *infile)
+static void	child_process(t_args *args, char *cmd_path, char **cmd_args, int fd[2])
 {
-	if (type == 1)
+	close(fd[0]);
+	dup2(fd[1], STDOUT_FILENO);
+	close(fd[1]);
+	if (!cmd_path)
 	{
-		*outfile = open(args->argv[args->argc - 1], O_CREAT | O_WRONLY
-				| O_APPEND, 0664);
-		if (*outfile == -1)
-			errors(args, 1);
+		ft_putendl_fd("error: command not found", 2);
+		errors_append(args, cmd_args, cmd_path, 3);
 	}
-	else if (type == 2)
-	{
-		*infile = open(args->argv[1], O_RDONLY);
-		*outfile = open(args->argv[args->argc - 1], O_CREAT | O_WRONLY
-				| O_TRUNC, 0664);
-		if (*outfile == -1 || *infile == -1)
-			errors(args, 1);
-	}
+	execve(cmd_path, cmd_args, args->envp);
+	errors_append(args, cmd_args, cmd_path, 3);
+
 }
 
-static void	here_doc(t_args *args)
+void	parent_process(char *cmd_path, char **cmd_args, int fd[2])
 {
-	int		fd[2];
-	char	*line;
-
-	if (pipe(fd) == -1)
-		errors(args, 1);
-	line = get_next_line(0);
-	while (line != NULL && ft_strcmp(line, args->argv[2]) != 0)
-	{
-		write(fd[1], line, ft_strlen(line));
-		free(line);
-		line = get_next_line(0);
-	}
-	if (line)
-		free(line);
+	waitpid(-1, NULL, WNOHANG);
 	close(fd[1]);
 	dup2(fd[0], STDIN_FILENO);
 	close(fd[0]);
+	free(cmd_path);
+	ft_split_free(cmd_args);
 }
 
-static void	set_index(int argc, char **argv, t_args *args)
+void 	exec_last_cmd(char *cmd_path, char **cmd_args, t_args *args, int outfile)
 {
-	int		index;
-	int		outfile;
-	int		infile;
 
-	if (ft_strncmp(argv[1], "here_doc", ft_strlen(argv[1])) == 0)
+	dup2(outfile, STDOUT_FILENO);
+	close(outfile);
+	if (!cmd_path)
 	{
-		index = 3;
-		here_doc(args);
-		open_files(args, 1, &outfile, &infile);
+		ft_putendl_fd("error: command not found", 2);
+		errors_append(args, cmd_args,  cmd_path, 3);
 	}
-	else
-	{
-		index = 2;
-		open_files(args, 2, &outfile, &infile);
-		dup2(infile, STDIN_FILENO);
-	}
-	while (++index <= (argc - 2))
-		pipex_bonus(args, index, outfile);
+	execve(cmd_path, cmd_args, args->envp);
+	errors_append(args, cmd_args,  cmd_path, 3);
 }
 
-int	main(int argc, char **argv, char **envp)
+static void	call_processes(t_args *args, char *cmd_path, char **cmd_args, int index, int outfile)
 {
-	t_args	args;
+	int	fd[2];
+	int	id;
 
-	check_arguments(argv);
-	args.argv = argv;
-	args.argc = argc;
-	args.envp = envp;
-	args.path = get_path(envp);
-	if (argc >= 5)
-		set_index(argc, argv, &args);
+	if (pipe(fd) == -1)
+	{
+		free(cmd_path);
+		ft_split_free(cmd_args);
+		errors(args, 1);
+	}
+	id = fork();
+	if (id == -1)
+	{
+		free(cmd_path);
+		ft_split_free(cmd_args);
+		errors(args, 1);
+	}
+	if (index < (args->argc - 2))
+	{
+		if (id == 0)
+			child_process(args, cmd_path, cmd_args, fd);
+		else
+			parent_process(cmd_path, cmd_args, fd);
+	}
 	else
-		errors(&args, 3);
+		exec_last_cmd(cmd_path, cmd_args, args, outfile);
+
+}
+
+void	pipex_bonus(t_args *args, int index, int outfile)
+{
+	char	**cmd_args;
+	char	*cmd_path;
+
+	cmd_args = ft_split(args->argv[index], ' ');
+	if (!cmd_args)
+	{
+		ft_putendl_fd("error: Argument failed", 2);
+		if (index >= args->argc - 2)
+		{
+			ft_split_free(args->path);
+			exit(EXIT_FAILURE);
+		}
+		return ;
+	}
+	cmd_path = find_command_path(args->path, cmd_args[0]);
+	call_processes(args, cmd_path, cmd_args, index, outfile);
+
 }

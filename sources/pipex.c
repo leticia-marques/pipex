@@ -6,7 +6,7 @@
 /*   By: lemarque <lemarque@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 21:57:58 by lemarque          #+#    #+#             */
-/*   Updated: 2022/01/12 10:54:38 by lemarque         ###   ########.fr       */
+/*   Updated: 2022/01/12 20:59:02 by lemarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ int	main(int argc, char **argv, char **envp)
 {
 	t_args	args;
 
-	if (argc < 4)
+	if (argc < 5)
 	{
 		ft_putendl_fd("Wrong number of arguments", 2);
 		return (1);

@@ -15,7 +15,7 @@ UTILS_FILES+= ft_substr.c ft_split.c ft_strcmp.c
 UTILS_PATH  = $(addprefix $(UTILS_DIR)/, $(UTILS_FILES))
 
 SRC_FILES   = pipex.c $(SHARED_PATH) $(UTILS_PATH)
-BONUS_FILES = pipex_bonus.c execute_cmd.c get_next_line.c
+BONUS_FILES = pipex_bonus.c main_bonus.c get_next_line.c
 BONUS_FILES+= $(SHARED_PATH) $(UTILS_PATH)
 
 OBJ_DIR  = ./objs
@@ -32,7 +32,7 @@ MKDIR = mkdir -p $(@D)
 
 .DEFAULT_GOAL  = all
 
-all : $(NAME)
+all : $(BONUS_NAME)
 
 $(OBJ_DIR)/%.o:	$(SRC_DIR)/%.c
 	$(MKDIR)
@@ -44,11 +44,10 @@ $(NAME):	$(OBJ_FILES)
 bonus:		$(BONUS_NAME)
 
 $(BONUS_NAME):	$(BONUS_OBJ_FILES)
-				$(MKDIR)
 				$(RM) $(NAME)
 				$(CC) $(CFLAGS) $(INC) $(BONUS_OBJ_FILES) -o $(BONUS_NAME)
-				cp $(BONUS_NAME) $(NAME)
-				$(RM) $(BONUS_NAME)
+				mv $(BONUS_NAME) $(NAME)
+
 
 clean:
 	$(RM) $(OBJ_DIR)

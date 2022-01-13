@@ -6,7 +6,7 @@
 /*   By: lemarque <lemarque@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 21:57:51 by lemarque          #+#    #+#             */
-/*   Updated: 2022/01/09 10:01:24 by lemarque         ###   ########.fr       */
+/*   Updated: 2022/01/12 21:32:01 by lemarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,14 +19,22 @@ void	errors_append(t_args *args, char **cmd_args, char *path, int code)
 		perror("Error");
 		ft_split_free(cmd_args);
 		ft_split_free(args->path);
-		exit(EXIT_SUCCESS);
+		exit(EXIT_FAILURE);
 	}
-	if (code == 2)
+	else if (code == 2)
 	{
 		perror("Error");
 		ft_split_free(cmd_args);
 		free(path);
 		ft_split_free(args->envp);
+	}
+	else if (code == 3)
+	{
+		free(path);
+		ft_split_free(cmd_args);
+		ft_split_free(args->path);
+		perror("error");
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -48,7 +56,7 @@ void	errors(t_args *args, int code)
 	{
 		ft_split_free(args->path);
 		ft_putendl_fd("Not enough arguments.", 2);
-		exit(EXIT_SUCCESS);
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -62,7 +70,7 @@ void	check_arguments(char **argv)
 		if (ft_strncmp(argv[i], " ", ft_strlen(" ")) == 0)
 		{
 			ft_putendl_fd("Error:Empty strings are not arguments.", 2);
-			exit(EXIT_SUCCESS);
+			exit(EXIT_FAILURE);
 		}
 		i++;
 	}
