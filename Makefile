@@ -1,10 +1,14 @@
-NAME 	   = pipex
+NAME		= pipex
 BONUS_NAME = pipex_bonus
 
 SRC_DIR 	= ./sources
-UTILS_DIR 	= utils
+UTILS_DIR	= utils
 SHARED_DIR	= shared
 BONUS_DIR	= ./sources
+BIN_DIR		= ./bin
+
+MANDATORY_FILE = $(addprefix $(BIN_DIR)/,$(NAME))
+BONUS_FILE = $(addprefix $(BIN_DIR)/, $(BONUS_NAME))
 
 SHARED_FILES = find_command_path.c errors.c  get_path.c
 SHARED_PATH  = $(addprefix $(SHARED_DIR)/, $(SHARED_FILES))
@@ -14,7 +18,7 @@ UTILS_FILES+= ft_strdup.c ft_strchr.c ft_strlen.c ft_strlcpy.c
 UTILS_FILES+= ft_substr.c ft_split.c ft_strcmp.c
 UTILS_PATH  = $(addprefix $(UTILS_DIR)/, $(UTILS_FILES))
 
-SRC_FILES   = pipex.c $(SHARED_PATH) $(UTILS_PATH)
+SRC_FILES	= pipex.c $(SHARED_PATH) $(UTILS_PATH)
 BONUS_FILES = pipex_bonus.c main_bonus.c get_next_line.c
 BONUS_FILES+= $(SHARED_PATH) $(UTILS_PATH)
 
@@ -30,7 +34,7 @@ RM  = rm -rf
 
 MKDIR = mkdir -p $(@D)
 
-.DEFAULT_GOAL  = all
+.DEFAULT_GOAL = all
 
 all : $(NAME)
 
@@ -38,21 +42,27 @@ $(OBJ_DIR)/%.o:	$(SRC_DIR)/%.c
 	$(MKDIR)
 	$(CC) $(CFLAGS) $(INC) -c $< -o $@
 
-$(NAME):	$(OBJ_FILES)
-			$(CC) $(CFLAGS) $(INC) $(OBJ_FILES) -o $(NAME)
+$(NAME):    $(MANDATORY_FILE)
 
-bonus:		$(BONUS_NAME)
+$(MANDATORY_FILE): $(OBJ_FILES)
+	$(MKDIR)
+	$(RM) $(BONUS_FILE)
+	$(CC) $(CFLAGS) $(INC) $(OBJ_FILES) -o $(MANDATORY_FILE)
+	cp $(MANDATORY_FILE) $(NAME)
 
-$(BONUS_NAME):	$(BONUS_OBJ_FILES)
-				$(RM) $(NAME)
-				$(CC) $(CFLAGS) $(INC) $(BONUS_OBJ_FILES) -o $(BONUS_NAME)
-				mv $(BONUS_NAME) $(NAME)
+bonus:	$(BONUS_NAME)
 
+$(BONUS_NAME):	$(BONUS_FILE)
 
+$(BONUS_FILE):	$(BONUS_OBJ_FILES)
+	$(MKDIR)
+	$(RM) $(MANDATORY_FILE)
+	$(CC) $(CFLAGS) $(INC) $(BONUS_OBJ_FILES) -o $(BONUS_FILE)
+	cp $(BONUS_FILE) $(NAME)
 clean:
 	$(RM) $(OBJ_DIR)
 
-fclean : clean
+fclean:	clean
 	$(RM) $(NAME)
 	$(RM) $(BONUS_NAME)
 

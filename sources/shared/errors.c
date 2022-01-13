@@ -6,7 +6,7 @@
 /*   By: lemarque <lemarque@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 21:57:51 by lemarque          #+#    #+#             */
-/*   Updated: 2022/01/12 21:32:01 by lemarque         ###   ########.fr       */
+/*   Updated: 2022/01/13 15:22:28 by lemarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	errors_append(t_args *args, char **cmd_args, char *path, int code)
 		perror("Error");
 		ft_split_free(cmd_args);
 		ft_split_free(args->path);
-		exit(EXIT_FAILURE);
+		exit(127);
 	}
 	else if (code == 2)
 	{
