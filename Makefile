@@ -65,7 +65,8 @@ clean:
 fclean:	clean
 	$(RM) $(NAME)
 	$(RM) $(BONUS_NAME)
-
+	$(RM) $(BIN_DIR)
+	
 re: fclean all
 
 rebonus: fclean bonus
