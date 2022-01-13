@@ -32,7 +32,7 @@ MKDIR = mkdir -p $(@D)
 
 .DEFAULT_GOAL  = all
 
-all : $(BONUS_NAME)
+all : $(NAME)
 
 $(OBJ_DIR)/%.o:	$(SRC_DIR)/%.c
 	$(MKDIR)
