@@ -6,7 +6,7 @@
 /*   By: lemarque <lemarque@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/09/03 18:49:46 by lemarque          #+#    #+#             */
-/*   Updated: 2022/01/12 10:18:16 by lemarque         ###   ########.fr       */
+/*   Updated: 2022/01/13 13:36:31 by lemarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,17 +68,19 @@ char	**ft_split(char const *s, char c)
 	size_t	word_size;
 	size_t	i;
 	int		count;
+	size_t	words_count;
 
+	words_count = get_words_number(s,c);
 	count = 0;
 	i = 0;
-	arr_words = malloc(sizeof(char *) * (get_words_number(s, c) + 1));
+	arr_words = malloc(sizeof(char *) * (words_count + 1));
 	if (!arr_words)
 		return (NULL);
 	while (*s)
 	{
 		count = set_c(&s, &c, count);
 		word_size = get_word_size(s, c);
-		if (*s != c && *s != '\'')
+		if (*s != c && *s != '\'' && i < words_count)
 		{
 			arr_words[i] = ft_substr(s, 0, word_size);
 			if (!arr_words[i])
