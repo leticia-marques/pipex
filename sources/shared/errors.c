@@ -6,7 +6,7 @@
 /*   By: lemarque <lemarque@student.42sp.org.br>    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/16 21:57:51 by lemarque          #+#    #+#             */
-/*   Updated: 2022/01/13 15:22:28 by lemarque         ###   ########.fr       */
+/*   Updated: 2022/01/14 14:40:27 by lemarque         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ void	errors_append(t_args *args, char **cmd_args, char *path, int code)
 {
 	if (code == 1)
 	{
+		ft_putendl_fd("command not found", 2);
 		perror("Error");
 		ft_split_free(cmd_args);
 		ft_split_free(args->path);
