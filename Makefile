@@ -15,11 +15,11 @@ SHARED_PATH  = $(addprefix $(SHARED_DIR)/, $(SHARED_FILES))
 
 UTILS_FILES	= ft_putendl_fd.c ft_split_free.c ft_strjoin.c ft_strncmp.c
 UTILS_FILES+= ft_strdup.c ft_strchr.c ft_strlen.c ft_strlcpy.c
-UTILS_FILES+= ft_substr.c ft_split.c ft_strcmp.c
+UTILS_FILES+= ft_substr.c ft_split.c ft_strcmp.c get_next_line.c
 UTILS_PATH  = $(addprefix $(UTILS_DIR)/, $(UTILS_FILES))
 
 SRC_FILES	= pipex.c $(SHARED_PATH) $(UTILS_PATH)
-BONUS_FILES = pipex_bonus.c main_bonus.c get_next_line.c
+BONUS_FILES = pipex_bonus.c main_bonus.c
 BONUS_FILES+= $(SHARED_PATH) $(UTILS_PATH)
 
 OBJ_DIR  = ./objs
@@ -66,7 +66,7 @@ fclean:	clean
 	$(RM) $(NAME)
 	$(RM) $(BONUS_NAME)
 	$(RM) $(BIN_DIR)
-	
+
 re: fclean all
 
 rebonus: fclean bonus
